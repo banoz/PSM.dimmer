@@ -4,9 +4,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define PSM_ADC_MAX               4095U
+#define PSM_ADC_MAX               1023U
 #define PSM_RANGE                 127U
-#define PSM_VALUE_FACTOR          16U
+#define PSM_ADC_INPUT_MIN         0U
+#define PSM_ADC_INPUT_MAX         PSM_ADC_MAX
 #define PSM_WORKING_MIN           0U
 #define PSM_WORKING_MAX           PSM_RANGE
 

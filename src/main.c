@@ -19,6 +19,9 @@ static volatile uint16_t g_adc_raw = 0U;
 static volatile uint16_t g_adc_working_value = PSM_WORKING_MIN;
 static psm_state_t g_psm_state;
 
+void EXTI7_0_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void ADC1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+
 static void init_clock(void)
 {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOC | RCC_APB2Periph_ADC1, ENABLE);
@@ -74,10 +77,7 @@ static void init_adc(void)
     ADC_Init(ADC1, &adc_init);
 
     ADC_RegularChannelConfig(ADC1, ADC_CHANNEL_PC4, 1, ADC_SampleTime_241Cycles);
-    ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
-
-    NVIC_EnableIRQ(ADC_IRQn);
-
+    ADC_Calibration_Vol(ADC1, ADC_CALVOL_50PERCENT);
     ADC_Cmd(ADC1, ENABLE);
 
     ADC_ResetCalibration(ADC1);
@@ -86,6 +86,24 @@ static void init_adc(void)
 
     ADC_StartCalibration(ADC1);
     while (ADC_GetCalibrationStatus(ADC1) == SET) {
+    }
+
+    ADC_ClearFlag(ADC1, ADC_FLAG_EOC | ADC_FLAG_STRT);
+    ADC_ClearITPendingBit(ADC1, ADC_IT_EOC);
+    ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
+    NVIC_EnableIRQ(ADC_IRQn);
+}
+
+static void wait_for_event_pin_stable_low(void)
+{
+    uint8_t consecutive_low_reads = 0U;
+
+    while (consecutive_low_reads < 5U) {
+        if (GPIO_ReadInputDataBit(EVENT_GPIO_PORT, EVENT_GPIO_PIN) == Bit_RESET) {
+            ++consecutive_low_reads;
+        } else {
+            consecutive_low_reads = 0U;
+        }
     }
 }
 
@@ -110,6 +128,7 @@ static void on_adc_read_complete(void)
 void EXTI7_0_IRQHandler(void)
 {
     if (EXTI_GetITStatus(EXTI_Line1) != RESET) {
+        wait_for_event_pin_stable_low();
         EXTI_ClearITPendingBit(EXTI_Line1);
         on_event_falling_edge();
     }

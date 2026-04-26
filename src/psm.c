@@ -13,11 +13,24 @@ void psm_init(psm_state_t *state)
 
 uint16_t psm_map_adc_to_logic(uint16_t adc_raw)
 {
+    uint32_t numerator;
+
     if (adc_raw > PSM_ADC_MAX) {
         adc_raw = PSM_ADC_MAX;
     }
 
-    return (uint16_t)(adc_raw / (PSM_VALUE_FACTOR * 2U));
+    if (adc_raw <= PSM_ADC_INPUT_MIN) {
+        return PSM_WORKING_MIN;
+    }
+
+    if (adc_raw >= PSM_ADC_INPUT_MAX) {
+        return PSM_WORKING_MAX;
+    }
+
+    numerator = (uint32_t)(adc_raw - PSM_ADC_INPUT_MIN) * PSM_WORKING_MAX;
+    numerator += (uint32_t)(PSM_ADC_INPUT_MAX - PSM_ADC_INPUT_MIN) / 2U;
+
+    return (uint16_t)(numerator / (uint32_t)(PSM_ADC_INPUT_MAX - PSM_ADC_INPUT_MIN));
 }
 
 uint16_t psm_map_adc_to_working(uint16_t adc_raw)

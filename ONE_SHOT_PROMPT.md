@@ -10,6 +10,7 @@ Build firmware where:
 2. PC2 is push-pull output.
 3. PC1 is falling-edge external interrupt input configured as floating input (no pull-up/pull-down).
 4. On each PC1 interrupt:
+- Confirm EXTI input stability by reading PC1 until 5 consecutive low samples are observed.
 - Use the previously stored mapped ADC value (do not wait for conversion).
 - Feed that mapped value into PSM skip logic.
 - Set output on PC2 based on skip result.
@@ -17,7 +18,7 @@ Build firmware where:
 - Return quickly.
 5. On ADC conversion complete interrupt:
 - Read ADC value.
-- Map ADC to working range.
+- Map ADC to working range using a fixed simple mapping (no dynamic range adaptation).
 - Store mapped value for use by the next PC1 interrupt.
 6. MCU should be interrupt-driven and sleep between events.
 
@@ -37,7 +38,9 @@ Build firmware where:
 4. Use WFI-based sleep strategy.
 5. Use regular ADC conversion with EOC interrupt; start conversion from the PC1 EXTI handler.
 6. Configure EXTI input pin (PC1) as floating input (no pull-up/pull-down).
-7. Keep PSM logic isolated in its own module with clear API for:
+7. Configure ADC as right-aligned and calibrated before enabling runtime conversion interrupts.
+8. Use CH32V003 ADC full-scale value 1023 for mapping constants.
+9. Keep PSM logic isolated in its own module with clear API for:
 - map raw ADC to logic/working value
 - set stored value
 - calculate skip decision
@@ -63,5 +66,7 @@ Build firmware where:
 1. Firmware builds without linker errors.
 2. PC1 handler uses prior ADC result only and only starts a new conversion.
 3. ADC complete handler updates stored mapped value for next cycle.
-4. Value 0 produces constant output low.
-5. Higher ADC produces fewer skips and more output high pulses.
+4. EXTI path applies the 5-consecutive-low stability check before skip/output logic executes.
+5. ADC uses right alignment and fixed-range mapping based on 10-bit max value (1023).
+6. Value 0 produces constant output low.
+7. Higher ADC produces fewer skips and more output high pulses.
