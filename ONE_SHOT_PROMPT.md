@@ -8,7 +8,7 @@ Build firmware where:
 
 1. PC4 is ADC input.
 2. PC2 is push-pull output.
-3. PC1 is falling-edge external interrupt input.
+3. PC1 is falling-edge external interrupt input configured as floating input (no pull-up/pull-down).
 4. On each PC1 interrupt:
 - Use the previously stored mapped ADC value (do not wait for conversion).
 - Feed that mapped value into PSM skip logic.
@@ -36,7 +36,8 @@ Build firmware where:
 3. No polling loops in normal runtime path.
 4. Use WFI-based sleep strategy.
 5. Use regular ADC conversion with EOC interrupt; start conversion from the PC1 EXTI handler.
-6. Keep PSM logic isolated in its own module with clear API for:
+6. Configure EXTI input pin (PC1) as floating input (no pull-up/pull-down).
+7. Keep PSM logic isolated in its own module with clear API for:
 - map raw ADC to logic/working value
 - set stored value
 - calculate skip decision

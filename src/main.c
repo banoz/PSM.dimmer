@@ -36,7 +36,7 @@ static void init_gpio(void)
     GPIO_WriteBit(OUT_GPIO_PORT, OUT_GPIO_PIN, Bit_RESET);
 
     gpio_init.GPIO_Pin = EVENT_GPIO_PIN;
-    gpio_init.GPIO_Mode = GPIO_Mode_IPU;
+    gpio_init.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(EVENT_GPIO_PORT, &gpio_init);
 
     gpio_init.GPIO_Pin = ADC_GPIO_PIN;
