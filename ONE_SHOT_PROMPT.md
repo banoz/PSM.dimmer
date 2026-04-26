@@ -14,12 +14,11 @@ Build firmware where:
 - Feed that mapped value into PSM skip logic.
 - Set output on PC2 based on skip result.
 - Trigger a new ADC conversion.
-- Request sleep and return quickly.
+- Return quickly.
 5. On ADC conversion complete interrupt:
 - Read ADC value.
 - Map ADC to working range.
 - Store mapped value for use by the next PC1 interrupt.
-- Request sleep.
 6. MCU should be interrupt-driven and sleep between events.
 
 ## Behavior Requirements
@@ -36,9 +35,10 @@ Build firmware where:
 2. Keep ISR handlers minimal and fast.
 3. No polling loops in normal runtime path.
 4. Use WFI-based sleep strategy.
-5. Keep PSM logic isolated in its own module with clear API for:
+5. Use regular ADC conversion with EOC interrupt; start conversion from the PC1 EXTI handler.
+6. Keep PSM logic isolated in its own module with clear API for:
 - map raw ADC to logic/working value
-- set/update stored value
+- set stored value
 - calculate skip decision
 
 ## Build And Environment Constraints

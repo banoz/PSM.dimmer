@@ -20,7 +20,6 @@ void psm_init(psm_state_t *state);
 uint16_t psm_map_adc_to_logic(uint16_t adc_raw);
 uint16_t psm_map_adc_to_working(uint16_t adc_raw);
 void psm_set_value(psm_state_t *state, uint16_t mapped_value);
-void psm_update_value(psm_state_t *state, uint16_t mapped_value);
 bool psm_calculate_skip(psm_state_t *state);
 
 #endif

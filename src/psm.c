@@ -44,23 +44,6 @@ void psm_set_value(psm_state_t *state, uint16_t mapped_value)
     state->value = mapped_value;
 }
 
-void psm_update_value(psm_state_t *state, uint16_t mapped_value)
-{
-    if (state == 0) {
-        return;
-    }
-
-    if (mapped_value > PSM_WORKING_MAX) {
-        mapped_value = PSM_WORKING_MAX;
-    }
-
-    if ((mapped_value > (uint16_t)(state->value + 1U)) ||
-        ((uint16_t)(mapped_value + 1U) < state->value)) {
-        state->value = mapped_value;
-        state->accumulator = 0U;
-    }
-}
-
 bool psm_calculate_skip(psm_state_t *state)
 {
     if (state == 0) {

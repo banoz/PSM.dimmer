@@ -17,8 +17,6 @@
 
 static volatile uint16_t g_adc_raw = 0U;
 static volatile uint16_t g_adc_working_value = PSM_WORKING_MIN;
-static volatile bool g_sleep_requested = true;
-static volatile uint16_t g_adc_logic_value = 0U;
 static psm_state_t g_psm_state;
 
 static void init_clock(void)
@@ -91,38 +89,22 @@ static void init_adc(void)
     }
 }
 
-static inline void request_sleep(void)
-{
-    g_sleep_requested = true;
-}
-
-static inline void sleep_if_requested(void)
-{
-    if (g_sleep_requested) {
-        g_sleep_requested = false;
-        __WFI();
-    }
-}
-
 static void on_event_falling_edge(void)
 {
     bool skip;
 
-    g_adc_logic_value = g_adc_working_value;
     psm_set_value(&g_psm_state, g_adc_working_value);
     skip = psm_calculate_skip(&g_psm_state);
 
     GPIO_WriteBit(OUT_GPIO_PORT, OUT_GPIO_PIN, skip ? Bit_RESET : Bit_SET);
 
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
-    request_sleep();
 }
 
 static void on_adc_read_complete(void)
 {
     g_adc_raw = ADC_GetConversionValue(ADC1);
     g_adc_working_value = psm_map_adc_to_working(g_adc_raw);
-    request_sleep();
 }
 
 void EXTI7_0_IRQHandler(void)
@@ -151,7 +133,6 @@ int main(void)
     init_adc();
 
     for (;;) {
-        sleep_if_requested();
         __WFI();
     }
 }
