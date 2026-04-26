@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Configure CH32V003 firmware",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "-S",
+        ".",
+        "-B",
+        "build",
+        "-DCMAKE_TOOLCHAIN_FILE=/opt/gcc-riscv-none-elf/gcc-riscv-none-elf.cmake",
+        "-DWCH_SDK=/opt/wch-sdk"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Build CH32V003 firmware",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--build",
+        "build"
+      ],
+      "dependsOn": [
+        "Configure CH32V003 firmware"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "label": "Clean CH32V003 firmware",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--build",
+        "build",
+        "--target",
+        "clean"
+      ],
+      "dependsOn": [
+        "Configure CH32V003 firmware"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

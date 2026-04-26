@@ -1,0 +1,20 @@
+{
+  "configurations": [
+    {
+      "name": "DevContainer",
+      "includePath": [
+        "${workspaceFolder}/src",
+        "${env:WCH_SDK}/EVT/EXAM/SRC/Peripheral/inc",
+        "${env:WCH_SDK}/EVT/EXAM/SRC/Startup"
+      ],
+      "defines": [
+        "CH32V00x",
+        "USE_STDPERIPH_DRIVER"
+      ],
+      "compilerPath": "riscv-none-elf-gcc",
+      "cStandard": "c11",
+      "intelliSenseMode": "gcc-x64"
+    }
+  ],
+  "version": 4
+}

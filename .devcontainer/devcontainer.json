@@ -1,0 +1,28 @@
+{
+  "name": "PSM Dimmer (WCH RISC-V)",
+  "image": "islandc/wch-riscv-devcontainer:latest",
+  "remoteUser": "vscode",
+  "mounts": [
+    "source=${localEnv:WCH_SDK},target=/opt/wch-sdk,type=bind"
+  ],
+  "containerEnv": {
+    "WCH_SDK": "/opt/wch-sdk"
+  },
+  "postCreateCommand": "setup-devcontainer",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "cmake.configureOnOpen": false,
+        "cmake.configureSettings": {
+          "CMAKE_TOOLCHAIN_FILE": "/opt/gcc-riscv-none-elf/gcc-riscv-none-elf.cmake",
+          "WCH_SDK": "/opt/wch-sdk"
+        }
+      },
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "ms-vscode-remote.remote-containers"
+      ]
+    }
+  }
+}

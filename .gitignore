@@ -1,0 +1,21 @@
+# Build directories
+/build/
+/build-*/
+/cmake-build-*/
+
+# CMake local files
+/CMakeUserPresets.json
+/compile_commands.json
+
+# Firmware build outputs
+*.elf
+*.hex
+*.bin
+*.map
+*.lst
+*.o
+*.obj
+*.d
+
+# Devcontainer post-create helper artifacts
+/.vscode/setup/
